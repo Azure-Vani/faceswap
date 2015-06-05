@@ -86,9 +86,9 @@ class FacePoseBin:
 	def save(self, face_img, face_id, pose, landmark):
 		# save the face image
 		pose_bin_id = self.get_pose_bin_id(pose.yaw, pose.pitch)
-		print "Yaw=%d Pitch=%d Bin Name=%d" % (int(pose.yaw), int(pose.pitch), pose_bin_id)
+		#print "Yaw=%d Pitch=%d Bin Name=%d" % (int(pose.yaw), int(pose.pitch), pose_bin_id)
 		save_path = self.bin2path(pose_bin_id) + '/' + str(face_id) + '.png'
-		print "saving image to path:", save_path
+		#print "saving image to path:", save_path
 		plt.imsave(save_path, face_img)
 		# save the data file
 		# this data file could be optimized, by sorting the face_id

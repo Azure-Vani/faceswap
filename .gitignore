@@ -56,3 +56,9 @@ docs/_build/
 # PyBuilder
 target/
 
+
+
+
+facepp-python-sdk/
+facesets/
+posebins/

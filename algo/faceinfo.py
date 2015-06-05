@@ -12,8 +12,13 @@ class FacePoint:
 			exit(1)
 		self.x = self.x - x
 		self.y = self.y - y
+	def avg(self, point):
+		self.x = (self.x + point.x)/2
+		self.y = (self.y + point.y)/2
+	def array(self):
+		return [self.x, self.y]
 	def __str__(self):
-		return "(%.2f,%.2f)" % (self.x, self.y)
+		return "%.2f %.2f" % (self.x, self.y)
 
 class FaceLandmark:
 	# dict is landmark['result'][0]['landmark']
@@ -38,6 +43,13 @@ class FaceLandmark:
 			print self.all_points[idx],
 			self.all_points[idx].transform(x, y)
 			print self.all_points[idx]
+	def avg(self, landmark):
+		self.eye_ll.avg(landmark.eye_ll )
+		self.eye_lr.avg(landmark.eye_lr )
+		self.eye_rl.avg(landmark.eye_rl )
+		self.eye_rr.avg(landmark.eye_rr )
+		self.mouth_l.avg(landmark.mouth_l)
+		self.mouth_r.avg(landmark.mouth_r)
 	def __str__(self):
 		s = []
 		for (k, v) in sorted(self.__dict__.items()):
@@ -76,3 +88,6 @@ class FaceInfo:
 		self.face_id = l[1]
 		self.pose = FacePose(pose_list=map(float, l[2:5]))
 		self.landmark = FaceLandmark(all_points=map(float, l[5:]))
+	@property
+	def img_path(self):
+		return str(self.pose_bin_id) + '/' + self.face_id + '.png'

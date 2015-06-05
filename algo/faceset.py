@@ -4,15 +4,19 @@ import sys
 from faceproc import FaceProc
 from faceposebin import FacePoseBin
 
-def traverse(faceset_root, face_proc):
-	for root, dirs, files in os.walk(faceset_root):
-		for img_file in files:
-			img_file, img_ext = os.path.splitext(img_file)
-			if img_ext in ['.jpg', '.png']:
-				# then its a image file
-				img_path = root+'/'+img_file+img_ext
-				print img_path
-				face_proc.proc_image(img_path)
+class FaceSet:
+	def __init__(self, root_path):
+		def traverse(faceset_root):
+			images = []
+			for root, dirs, files in os.walk(faceset_root):
+				for img_file in files:
+					img_file, img_ext = os.path.splitext(img_file)
+					if img_ext in ['.jpg', '.png']:
+						# then its a image file
+						img_path = root+'/'+img_file+img_ext
+						images.append(img_path)
+			return images
+		self.imagestream = traverse(root_path)
 
 if __name__ == '__main__':
 	if len(sys.argv) <= 2:
@@ -24,5 +28,5 @@ if __name__ == '__main__':
 	# which means, cleared.
 	pose_bin.init()
 
-	face_proc = FaceProc(pose_bin)
-	traverse(sys.argv[1], face_proc)
+	faceset = FaceSet(sys.argv[1])
+	print "number of images:", len(faceset.imagestream)

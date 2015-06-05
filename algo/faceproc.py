@@ -1,6 +1,8 @@
 
 import sys
-from scipy import misc
+import numpy as np
+import scipy
+from scipy import ndimage
 import matplotlib.pyplot as plt
 
 from faceinfo import FaceInfo, FaceLandmark, FacePoint, FacePose
@@ -11,6 +13,33 @@ from facepp import API, File, APIError
 API_KEY = 'bf7eae5ed9cf280218450523049d5f94'
 API_SECRET = 'o6SeKJTnaoczTb-j6PBEGXvkiVz2hp71'
 api = API(API_KEY, API_SECRET)
+
+def get_transform_matrix(p1,p2,p3,s1,s2,s3):
+    pri = np.matrix([p1,p2,p3]).T
+    sec = np.matrix([s1,s2,s3]).T
+   
+    pri = np.vstack((pri, [1,1,1]))
+    sec = np.vstack((sec, [1,1,1]))
+    x1 = np.linalg.solve(pri.T, (sec.T)[:, 0])
+    x2 = np.linalg.solve(pri.T, (sec.T)[:, 1])
+    transform = np.vstack(((x1.T)[0,0:2], (x2.T)[0,0:2]))
+    return transform
+
+def affine_transform_image(img,p1,p2,p3,s1,s2,s3):
+    transform = (get_transform_matrix(p1, p2, p3, s1, s2, s3)).T
+    
+    newshape = np.array(img.shape[0:2])*0.9
+    c_in = 0.5*np.array(img.shape[0:2])
+    c_out = 0.5*newshape
+    #print transform, c_in, c_out
+    offset = c_in-c_out.dot(transform.T)
+    img_r = img[:,:,0]
+    img_g = img[:,:,1]
+    img_b = img[:,:,2]
+    transimg_r = ndimage.interpolation.affine_transform(img_r,transform,order=4,offset=np.array((offset.item(0,0), offset.item(0,1))),output_shape=newshape,cval=0.0,output=np.float32)
+    transimg_g = ndimage.interpolation.affine_transform(img_g,transform,order=4,offset=np.array((offset.item(0,0), offset.item(0,1))),output_shape=newshape,cval=0.0,output=np.float32)
+    transimg_b = ndimage.interpolation.affine_transform(img_b,transform,order=4,offset=np.array((offset.item(0,0), offset.item(0,1))),output_shape=newshape,cval=0.0,output=np.float32)
+    return np.dstack((transimg_r, transimg_g, transimg_b))
 
 from pprint import pformat
 # copied from hello.py
@@ -38,17 +67,18 @@ class FaceProc:
 		landmark = api.detection.landmark(face_id = face_id, type='25p')
 		# crop the image
 		center = face['position']['center']
-		w = face['position']['width'] / 100 * img_width
-		h = face['position']['height'] / 100 * img_height
+		w = 200
+		h = 200
 		# scale a little bit
-		w *= 1.5
-		h *= 1.5 
+		#w *= 1.5
+		#h *= 1.5 
 		img = plt.imread(img_name)
+		print img.shape
 		x = center['x'] * img_width / 100
 		y = center['y'] * img_height / 100
 		(x0, x1) = (x-w/2, x+w/2)
 		(y0, y1) = (y-h/2, y+h/2)
-		face_img = img[y0:y1, x0:x1]
+		face_img = img[y0:y1, x0:x1, :]
 		if face_img.shape[0] == 0 or face_img.shape[1] == 0:
 			print "Image broken..."
 			return 
@@ -71,6 +101,21 @@ class FaceProc:
 		for face in rst['face']:
 			self.proc_face(face, rst['img_width'], rst['img_height'], img_name)
 		print 'proc_image: done'
+
+	def affine_transform(self, img_name, mark1, mark2):
+		origin_image = plt.imread(img_name)
+		p1 = mark1.eye_ll.array()
+		p2 = mark1.eye_rl.array()
+		p3 = mark1.mouth_l.array()
+		s1 = mark2.eye_ll.array()
+		s2 = mark2.eye_rl.array()
+		s3 = mark2.mouth_l.array()
+		transimg = affine_transform_image(origin_image, p1, p2, p3, s1, s2, s3)
+		plt.imshow(transimg)
+		plt.show()
+
+
+
 
 if __name__ == '__main__':
 	if len(sys.argv) <= 2:
