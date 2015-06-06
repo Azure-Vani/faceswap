@@ -56,7 +56,7 @@ if __name__ == '__main__':
     #dsize = (300,300)
     map_result = cv2.warpAffine(dst_img, map_matrix, dsize=(300,300))
     
-    extract_face = contour.extract_face(src_face['face_id'], src_img_width, src_img_height)
+    extract_face = contour.extract_face(src_face['face_id'], src_img_width, src_img_height, src_name)
     cv2.imshow('extract source image', extract_face)
 
     # merge 
@@ -65,6 +65,7 @@ if __name__ == '__main__':
     		if sum(extract_face[y][x]) == 0:
     			continue
     		else:
+    			# here we need to change the light of extract face
     			map_result[y][x] = extract_face[y][x]
     cv2.imshow('merge', map_result)
 
