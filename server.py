@@ -15,6 +15,15 @@ class Faceswap(object):
         file = tempfile.NamedTemporaryFile(suffix="."+suffix)
         print "[TempFile] Created file %s"%(file.name)
         file.write(img_data)
+        return self.fetch(file)
+
+    def fetch(self, file):
+        raw_data = file.read()
+        suffix = file.name.split(".")[-1]
+        return self.encode(raw_data, suffix)
+
+    def encode(self, raw_data, suffix):
+        return "image/%s;base64,%s"%(suffix, base64.b64encode(raw_data))
 
     def decode(self, data):
         meta, raw_data = data.split(",")
