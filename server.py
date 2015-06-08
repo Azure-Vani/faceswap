@@ -12,7 +12,7 @@ class Faceswap(object):
     @cherrypy.expose
     def query(self, data):
         suffix, img_data = self.decode(data)
-        file = tempfile.NamedTemporaryFile(dir = tmp_dir, delete=False, suffix="."+suffix)
+        file = tempfile.NamedTemporaryFile(suffix="."+suffix)
         print "[TempFile] Created file %s"%(file.name)
         file.write(img_data)
 
@@ -24,7 +24,6 @@ class Faceswap(object):
 
 if __name__ == '__main__':
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    tmp_dir = os.path.join(current_dir, "tmp")
 
     cherrypy.config.update({'server.socket_host': '0.0.0.0',})
     cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '80')),})
