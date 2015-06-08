@@ -62,3 +62,7 @@ target/
 facepp-python-sdk/
 facesets/
 posebins/
+
+tmp/
+log
+.DS_store
