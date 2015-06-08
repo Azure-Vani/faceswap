@@ -25,6 +25,10 @@ class Faceswap(object):
 if __name__ == '__main__':
     current_dir = os.path.dirname(os.path.abspath(__file__))
     tmp_dir = os.path.join(current_dir, "tmp")
+
+    cherrypy.config.update({'server.socket_host': '0.0.0.0',})
+    cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '80')),})
+
     config = {
             "/static": {
                 "tools.staticdir.on": True,
