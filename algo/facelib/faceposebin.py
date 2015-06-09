@@ -83,17 +83,24 @@ class FacePoseBin:
 			return 0
 		return col_id + (row_id-1) * POSE_BIN_COL_STEPS
 
-	def save(self, face_img, face_id, pose, landmark):
+	def save(self, face_img, face_id, pose, landmark, name):
 		# save the face image
 		pose_bin_id = self.get_pose_bin_id(pose.yaw, pose.pitch)
 		#print "Yaw=%d Pitch=%d Bin Name=%d" % (int(pose.yaw), int(pose.pitch), pose_bin_id)
-		save_path = self.bin2path(pose_bin_id) + '/' + str(face_id) + '.png'
+		save_path = self.bin2path(pose_bin_id) + '/' + name + '.png'
 		#print "saving image to path:", save_path
 		plt.imsave(save_path, face_img)
 		# save the data file
 		# this data file could be optimized, by sorting the face_id
 		print "saving image data file to path:", self.data_file_path()
 
+		# here will change what we want to store
+		# basically, we need the following data for ranking
+		# 1. yaw, pitch and roll: yaw and pitch should match first, 
+		# and then roll.
+		# 2. distance between eyes: to estimate the resolution
+		# 3. and also I think I need the name, but this could be provided by
+		# using the image file name
 		data_file_handler = open(self.data_file_path(), 'a')
 		print >>data_file_handler, "%d"%pose_bin_id,
 		print >>data_file_handler, "%s"%face_id,

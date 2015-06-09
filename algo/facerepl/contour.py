@@ -80,7 +80,7 @@ def extract_face(face_id, img_width, img_height, face_name):
 	    		y = dy + nose_y
     		contour.append([x, y])
 	contour = np.array(contour, dtype=np.int32)
-	extract_face = cv2.imread(face_name, 0)
+	extract_face = cv2.imread(face_name)
 	#print extract_face.shape
 	for x in xrange(img_width):
 		for y in xrange(img_height):
@@ -90,6 +90,98 @@ def extract_face(face_id, img_width, img_height, face_name):
 				extract_face[y][x][1] = 0
 				extract_face[y][x][2] = 0
 	return extract_face
+
+def extract_face_alpha(face_id, img_width, img_height, face_name):
+	landmark = api.detection.landmark(face_id=face_id, type='83p')
+	
+	#center point to expend the contour
+	nose_x = landmark['result'][0]['landmark']['nose_tip']['x']
+	nose_y = landmark['result'][0]['landmark']['nose_tip']['y']
+	nose_x = nose_x / 100 * img_width
+	nose_y = nose_y / 100 * img_height
+
+	contour = []
+	contour_point_name = []
+	for v in contour_name_list2:
+    		x = landmark['result'][0]['landmark'][v]['x']
+    		y = landmark['result'][0]['landmark'][v]['y']
+    		x = x / 100 * img_width
+    		y = y / 100 * img_height
+    		if 'mouth' in v:
+	    		dx = (x-nose_x) * 1.2
+	    		dy = (y-nose_y) * 1.2
+	    		#print '%s: %5.2f %5.2f' % (v, x-nose_x, y-nose_y)
+	    		x = dx + nose_x 
+	    		y = dy + nose_y
+    		contour.append([x, y])
+	contour = np.array(contour, dtype=np.int32)
+	
+	# extract face in this case is juse a mask with 0~1 value
+	extract_face = np.zeros((img_height, img_width))
+	for x in xrange(img_width):
+		for y in xrange(img_height):
+			d = cv2.pointPolygonTest(contour,(x,y),True)
+			d0 = 5
+			if d < d0 and d > -d0:
+				extract_face[y][x] = float(d0+d)/(2*d0)
+			elif d < 0:
+				#print x, y
+				extract_face[y][x] = 0 # out of face is zero
+			else:
+				extract_face[y][x] = 1 # in face is 1
+
+	return extract_face
+
+def extract_face_mask(face_id, img_width, img_height, face_name):
+	landmark = api.detection.landmark(face_id=face_id, type='83p')
+	
+	#center point to expend the contour
+	nose_x = landmark['result'][0]['landmark']['nose_tip']['x']
+	nose_y = landmark['result'][0]['landmark']['nose_tip']['y']
+	nose_x = nose_x / 100 * img_width
+	nose_y = nose_y / 100 * img_height
+
+	contour = []
+	contour_point_name = []
+	for v in contour_name_list2:
+    		x = landmark['result'][0]['landmark'][v]['x']
+    		y = landmark['result'][0]['landmark'][v]['y']
+    		x = x / 100 * img_width
+    		y = y / 100 * img_height
+    		#if v == 'left_eyebrow_left_corner':
+    		#	x -= 5
+    		#elif v == 'left_eyebrow_left_corner':
+    		#	x += 5
+    		if 'mouth' in v:
+	    		dx = (x-nose_x) * 1.2
+	    		dy = (y-nose_y) * 1.2
+	    		#print '%s: %5.2f %5.2f' % (v, x-nose_x, y-nose_y)
+	    		x = dx + nose_x 
+	    		y = dy + nose_y
+    		contour.append([x, y])
+	contour = np.array(contour, dtype=np.int32)
+	
+	m = cv2.moments(contour, True)
+	center = (int(m['m10']/m['m00']), int(m['m01']/m['m00']))
+	# extract face in this case is juse a mask with 0~1 value
+	face_img = cv2.imread(face_name)
+	extract_face = np.zeros(face_img.shape,dtype=face_img.dtype)
+	for x in xrange(img_width):
+		for y in xrange(img_height):
+			d = cv2.pointPolygonTest(contour,(x,y),True)
+			d0 = 5
+			val = 0
+			#if d < 0 and d > -d0:
+			#	val = int(float(d0+d)/(2*d0) * 255)
+			if d < -d0:
+				#print x, y
+				val = 0 # out of face is zero
+			else:
+				val = 255 # in face is 1
+			extract_face[y][x][0] = val
+			extract_face[y][x][1] = val
+			extract_face[y][x][2] = val
+	return extract_face, center
 
 if __name__ == '__main__':
     if len(sys.argv) <= 1:

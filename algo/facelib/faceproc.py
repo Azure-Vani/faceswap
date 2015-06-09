@@ -93,12 +93,17 @@ class FaceProc:
 		# get alignment data
 		face_landmark = FaceLandmark(landmark['result'][0]['landmark'], img_width, img_height)
 		face_landmark.transform(x0, y0)
-		self.pose_bin.save(face_img, face_id, face_pose, face_landmark)
+		name = img_name.split('.')[-2]
+		name = name.split('/')[-1]
+		print name
+		self.pose_bin.save(face_img, face_id, face_pose, face_landmark, name)
 
 	def proc_image(self, img_name):
 		print 'proc_image: image file', img_name
 		rst = api.detection.detect(img = File(img_name), attribute='pose')
 		for face in rst['face']:
+			# basically, there will be only one image in the lfw file
+			
 			self.proc_face(face, rst['img_width'], rst['img_height'], img_name)
 		print 'proc_image: done'
 
