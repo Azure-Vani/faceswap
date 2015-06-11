@@ -103,7 +103,7 @@ class FacePoseBin:
 		# using the image file name
 		data_file_handler = open(self.data_file_path(), 'a')
 		print >>data_file_handler, "%d"%pose_bin_id,
-		print >>data_file_handler, "%s"%face_id,
+		print >>data_file_handler, "%s"%name,
 		print >>data_file_handler, "%d %d %d"%(pose.yaw, pose.pitch, pose.roll),
 		for point in landmark.all_points:
 			print >>data_file_handler, point,

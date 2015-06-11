@@ -234,7 +234,8 @@ class _APIProxy(object):
                 ret = urllib2.urlopen(request, timeout = self._api.timeout).read()
                 break
             except urllib2.HTTPError as e:
-                raise APIError(e.code, url, e.read())
+                time.sleep(self._api.retry_delay)
+                #raise APIError(e.code, url, e.read())
             except (socket.error, urllib2.URLError) as e:
                 if retry < 0:
                     raise e

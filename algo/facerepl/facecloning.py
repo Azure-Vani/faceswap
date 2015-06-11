@@ -24,6 +24,38 @@ def get_feature_points(face, w, h):
 		result.append([x,y])
 	return result
 
+def faceclone(src_name, dst_name):
+    src_img = cv2.imread(src_name)
+    dst_img = cv2.imread(dst_name)
+
+    src_rst = api.detection.detect(img = File(src_name), attribute='pose')
+    src_img_width   = src_rst['img_width']
+    src_img_height  = src_rst['img_height']
+    src_face        = src_rst['face'][0]
+
+    dst_rst = api.detection.detect(img = File(dst_name), attribute='pose')
+    dst_img_width   = dst_rst['img_width']
+    dst_img_height  = dst_rst['img_height']
+    dst_face        = dst_rst['face'][0]
+
+    ss = np.array(get_feature_points(src_face, src_img_width, src_img_height), dtype=np.float32)
+    ps = np.array(get_feature_points(dst_face, dst_img_width, dst_img_height), dtype=np.float32)
+    map_matrix = cv2.getAffineTransform(ps, ss)
+
+    #dsize = (300,300)
+    map_result = cv2.warpAffine(dst_img, map_matrix, dsize=(src_img_width,src_img_height))
+    
+    extract_mask, center = contour.extract_face_mask(src_face['face_id'], src_img_width, src_img_height, src_name)
+    # merge 
+    ## first blending the border
+    extract_alpha = contour.extract_face_alpha(src_face['face_id'], src_img_width, src_img_height, src_name)
+    center = (map_result.shape[0]/2, map_result.shape[1]/2)
+    map_result = cv2.seamlessClone(src_img, map_result, extract_mask, center, flags=cv2.NORMAL_CLONE)
+
+    imap_matrix = cv2.invertAffineTransform(map_matrix)
+    final = cv2.warpAffine(map_result, imap_matrix, dsize=(dst_img.shape[0:2]))
+    return final
+
 if __name__ == '__main__':
     if len(sys.argv) <= 1:
         print "usage: %s <image src> <image dst>" % sys.argv[0]

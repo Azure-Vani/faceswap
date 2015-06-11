@@ -76,18 +76,18 @@ class FacePose:
 		return "yaw=%.2f pitch=%.2f roll=%.2f" % (self.yaw, self.pitch, self.roll)
 
 class FaceInfo:
-	def __init__(self, face_id=None, pose_bin_id=None, pose=None, landmark=None):
-		self.face_id = face_id
+	def __init__(self, name=None, pose_bin_id=None, pose=None, landmark=None):
+		self.name = name
 		self.pose_bin_id = pose_bin_id
 		self.pose = pose
 		self.landmark = landmark
 	def __str__(self):
-		return "\nFace Id:\t" + str(self.face_id) + "\nPose Bin Id:\t" + str(self.pose_bin_id) + "\nPose:\t\t" + str(self.pose) + "\nLandmark:\t" + str(self.landmark)
+		return "\nFace Id:\t" + str(self.name) + "\nPose Bin Id:\t" + str(self.pose_bin_id) + "\nPose:\t\t" + str(self.pose) + "\nLandmark:\t" + str(self.landmark)
 	def parse(self, l):
 		self.pose_bin_id = int(l[0])
-		self.face_id = l[1]
+		self.name = l[1]
 		self.pose = FacePose(pose_list=map(float, l[2:5]))
 		self.landmark = FaceLandmark(all_points=map(float, l[5:]))
 	@property
 	def img_path(self):
-		return str(self.pose_bin_id) + '/' + self.face_id + '.png'
+		return str(self.pose_bin_id) + '/' + self.name + '.png'
