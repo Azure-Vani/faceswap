@@ -49,12 +49,17 @@ def faceswap(img_name):
 
 	print "found and sorted %d faces" % len(faceinfos)
 
+	ret_names = []
 	for faceinfo in faceinfos[0:DEFAULT_NUM_TOP]:
 		src_name = "%s/%d/%s.png" % (posebin.path, faceinfo.pose_bin_id, faceinfo.name)
 		dst_name = img_name
 		print src_name
 		swap_img = facecloning.faceclone(src_name, dst_name)
-		cv2.imwrite(DEFAULT_OUT_PREFIX+img_parsed_name+'_'+faceinfo.name+'.png', swap_img)
+		swap_name = DEFAULT_OUT_PREFIX+img_parsed_name+'_'+faceinfo.name+'.png'
+		cv2.imwrite(swap_name, swap_img)
+
+		ret_names.append(swap_name)
+	return ret_names
 
 
 if __name__ == '__main__':
@@ -63,4 +68,4 @@ if __name__ == '__main__':
 		exit(1)
 
 	print "swapping face %s ..." % sys.argv[1]
-	faceswap(sys.argv[1])
+	print faceswap(sys.argv[1])
