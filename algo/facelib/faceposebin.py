@@ -29,9 +29,9 @@ class FacePoseBinDataFile:
 # image names
 # 3. Init, clean, ...
 class FacePoseBin:
-	def __init__(self, path):
+	def __init__(self, path=None):
 		self.path = path # this path is to pose bin
-		self.data_file = FacePoseBinDataFile(self.data_file_path())
+		#self.data_file = FacePoseBinDataFile(self.data_file_path())
 		self.num_pose_bins = POSE_BIN_COL_STEPS * POSE_BIN_ROW_STEPS
 
 	def data_file_path(self):

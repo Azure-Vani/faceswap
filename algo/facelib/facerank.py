@@ -6,7 +6,7 @@ import cv2
 
 from faceinfo import FaceInfo, FacePose, FaceLandmark
 from facepp import API, File, APIError
-from faceposebin import FacePoseBin
+from faceposebin import FacePoseBin, FacePoseBinDataFile
 
 # please don't copy this
 API_KEY = 'bf7eae5ed9cf280218450523049d5f94'
@@ -35,15 +35,15 @@ def compare_by_faceinfo(i1,i2,cur_face_info):
 		return int(d1 - d2)
 
 class FaceRank:
-	def __init__(self, info, posebin):
+	def __init__(self, info, datafile):
 		self.cur_face_info = info
-		self.posebin = posebin
+		self.datafile = datafile
 
 	def rank(self):
 		face_posebin_id = self.cur_face_info.pose_bin_id
 
 		faceinfos = [] # just append the face with same posebin_id
-		for load_data in self.posebin.data_file.load():
+		for load_data in self.datafile.load():
 			faceinfo = FaceInfo()
 			faceinfo.parse(load_data)
 			if faceinfo.pose_bin_id == face_posebin_id:
@@ -59,15 +59,16 @@ class FaceRank:
 		return faceinfos
 
 if __name__ == '__main__':
-	if len(sys.argv) <= 2:
-		print "usage: %s <image> <posebin>" % sys.argv[0]
+	if len(sys.argv) <= 1:
+		print "usage: %s <image>" % sys.argv[0]
 		exit(1)
 
 	# first detect the new image:
 	img_name = sys.argv[1]
 	img = cv2.imread(img_name)
 
-	posebin = FacePoseBin(sys.argv[2])
+	dummybin = FacePoseBin()
+	datafile = FacePoseBinDataFile('../datafile.txt')
 
 	rst = api.detection.detect(img = File(img_name), attribute='pose')
 	img_width = rst['img_width']
@@ -83,14 +84,14 @@ if __name__ == '__main__':
 		cur_face_info.pose = face_pose
 		cur_face_info.landmark = face_landmark
 
-		face_posebin_id = posebin.get_pose_bin_id(face_pose.yaw, face_pose.pitch)
+		face_posebin_id = dummybin.get_pose_bin_id(face_pose.yaw, face_pose.pitch)
 		print face_id
 		print face_pose
 		print face_landmark
 		print 'current face has posebin id %d' % face_posebin_id
 		cur_face_info.pose_bin_id = face_posebin_id
 
-		facerank = FaceRank(cur_face_info, posebin)
+		facerank = FaceRank(cur_face_info, datafile)
 		faceinfos = facerank.rank()
 
 		print "found and sorted %d faces" % len(faceinfos)

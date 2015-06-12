@@ -1,1 +1,1 @@
-__all__ = ['faceinfo', 'faceposebin', 'facepp', 'faceproc', 'facerank', 'faceset', 'facetrain']
+__all__ = ['faceinfo', 'faceposebin', 'facepp', 'faceproc', 'facerank', 'faceset', 'facetrain', 'faceaws']
