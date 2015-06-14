@@ -23,8 +23,9 @@ $(document).ready(function() {
       var result = JSON.parse(event.data);
       if (result.action == "finish") {
         for (var i = 0; i < result.data.length; i++) {
+          console.log("replace " + i);
           var container = ".lsti" + i;
-          $("<img />", {src: result.data[0]}).appendTo($(container));
+          $("<img />", {src: result.data[1]}).appendTo($(container));
         }
         lock = false;
       } else {
