@@ -31,7 +31,7 @@ $(document).ready(function() {
         for (var i = 0; i < result.data.length; i++) {
           console.log("replace " + i);
           var container = ".lsti" + i;
-          $("<img />", {"src": result.data[i], "class": "result_img", "display":"None"}).appendTo($(container));
+          $("<img />", {"src": result.data[i], "class": "result_img", "display":"none"}).appendTo($(container));
           $('.result_img').fadeIn(400);
         }
         lock = false;
