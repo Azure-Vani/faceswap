@@ -67,7 +67,10 @@ def faceclone(src_name, dst_name):
 
     imap_matrix = cv2.invertAffineTransform(map_matrix)
     final = cv2.warpAffine(map_result, imap_matrix, dsize=(ndst_img.shape[0:2]))
-    new_final = copy_back_image(final, dw, dh)
+    
+    tmp_final_name = "tmp_final_%s.png" % dst_name
+    cv2.imwrite(tmp_final_name, final)
+    new_final = crop_face(final, dw, dh)
 
     return new_final
 
@@ -78,9 +81,10 @@ def copy_image(image, dw, dh):
     for x in xrange(img_width):
         for y in xrange(img_height):
             new_img[dh+y][dw+x] = image[y][x]
-    return new_img
+    
     #cv2.imshow('newimage', new_img)
     #cv2.waitKey(0)
+    return new_img
     #new_src_img = np.zeros((src_img_height, src_img_width, 3), np.uint8)
 def copy_back_image(image, dw, dh):
     img_height, img_width = (image.shape[0], image.shape[1])
@@ -93,6 +97,24 @@ def copy_back_image(image, dw, dh):
             new_img[y][x] = image[dh+y][dw+x]
     return new_img
 
+def crop_face(src_name):
+    src_rst = api.detection.detect(img = File(src_name), attribute='pose')
+    src_img_width   = src_rst['img_width']
+    src_img_height  = src_rst['img_height']
+    src_face        = src_rst['face'][0]
+
+    center = src_face['position']['center']
+    img = cv2.imread(src_name)
+    print img.shape
+    x = center['x'] * src_img_width / 100
+    y = center['y'] * src_img_height / 100
+    w = 150
+    h = 150
+    (x0, x1) = (x-w/2, x+w/2)
+    (y0, y1) = (y-h/2, y+h/2)
+    face_img = img[y0:y1, x0:x1, :]
+    print face_img.shape
+    return face_img
 
 if __name__ == '__main__':
     if len(sys.argv) <= 1:
@@ -121,7 +143,8 @@ if __name__ == '__main__':
    
     nsrc_img = copy_image(src_img, dw, dh)
     ndst_img = copy_image(dst_img, dw, dh)
-    #cv2.imshow('newimage', nsrc_img)
+    cv2.imshow('nsrc', nsrc_img)
+    cv2.imshow('ndst', ndst_img)
     #cv2.waitKey(0)
     # there's only one face in this case
     ss = np.array(get_feature_points(src_face, src_img_width, src_img_height, dw, dh), dtype=np.float32)
@@ -136,6 +159,8 @@ if __name__ == '__main__':
     #dsize = (300,300)
     nsrc_img_width = src_img_width + dw * 2
     nsrc_img_height = src_img_height + dh * 2
+    ndst_img_width = dst_img_width + dw * 2
+    ndst_img_height = dst_img_height + dh * 2
     print "height=%d width=%d" % (nsrc_img_height, nsrc_img_width)
     map_result = cv2.warpAffine(ndst_img, map_matrix, dsize=(nsrc_img_width,nsrc_img_height))
     
@@ -157,7 +182,12 @@ if __name__ == '__main__':
     imap_matrix = cv2.invertAffineTransform(map_matrix)
     print map_result.shape
     print imap_matrix
-    final = cv2.warpAffine(map_result, imap_matrix, dsize=(ndst_img.shape[0:2]))
+    final = cv2.warpAffine(map_result, imap_matrix, dsize=(ndst_img_width, ndst_img_height))
+    cv2.imshow('final', final);
+    
+    tmp_final_name = "tmp_final_%s.png" % dst_name
+    cv2.imwrite(tmp_final_name, final)
+    #new_final = crop_face(tmp_final_name)
     new_final = copy_back_image(final, dw, dh)
 
     cv2.imshow('final.png', new_final)
