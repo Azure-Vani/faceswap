@@ -14,6 +14,7 @@ $(document).ready(function() {
     }
 
     $(".result_img").fadeOut(300).delay(500).remove();
+    $(".status").attr("src", "/static/assets/swaping.gif");
 
     lock = true;
 
