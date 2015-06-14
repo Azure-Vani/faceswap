@@ -1,5 +1,5 @@
 Cherrypy==3.7.0
-boto=2.38.0
-boto3=0.0.21
-matplotlib=1.3.1
-python-dateutil=2.2
+boto3==0.0.21
+matplotlib==1.3.1
+python-dateutil==2.2
+numpy==1.9.2
