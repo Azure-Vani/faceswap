@@ -21,7 +21,7 @@ $(document).ready(function() {
     }
     var url = protocol + "://" + location.host + "/ws";
     console.log("[websocket] established url: " + url)
-    var ws = new ReconnectingWebSocket(url);
+    var ws = new WebSocket(url);
 
     ws.onmessage = function(event) {
       var result = JSON.parse(event.data);
