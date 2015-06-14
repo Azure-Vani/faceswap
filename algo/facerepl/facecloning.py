@@ -67,10 +67,8 @@ def faceclone(src_name, dst_name):
 
     imap_matrix = cv2.invertAffineTransform(map_matrix)
     final = cv2.warpAffine(map_result, imap_matrix, dsize=(ndst_img.shape[0:2]))
-    
-    tmp_final_name = "tmp_final_%s.png" % dst_name
-    cv2.imwrite(tmp_final_name, final)
-    new_final = crop_face(final, dw, dh)
+
+    new_final = copy_back_image(final, dw, dh)
 
     return new_final
 
