@@ -9,7 +9,7 @@ from facelib.facerank import FaceRank
 from facelib.faceposebin import FacePoseBin, FacePoseBinDataFile
 from facelib.faceaws import *
 
-DEFAULT_NUM_TOP = 6
+DEFAULT_NUM_TOP = 3
 DEFAULT_OUT_PREFIX = 'tmp_'
 DEFAULT_DATAFILE_PATH = 'datafile.txt'
 
