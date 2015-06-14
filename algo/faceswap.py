@@ -24,7 +24,7 @@ def faceswap(img_name):
 	dummybin = FacePoseBin()
 	datafile = FacePoseBinDataFile(DEFAULT_DATAFILE_PATH)
 
-        yield {"finished": False, "status": "detecting"}
+        yield {"finished": False, "status": "detecting", "break":False}
 	rst = api.detection.detect(img = File(img_name), attribute='pose')
 	img_width = rst['img_width']
 	img_height = rst['img_height']
@@ -53,7 +53,8 @@ def faceswap(img_name):
 
 	ret_names = []
 	src_names = []
-        yield {"finished": False, "status": "downloading"}
+        yield {"finished": False, "status": "downloading", "break": False}
+        cnt = 0
 	for faceinfo in faceinfos[0:DEFAULT_NUM_TOP]:
 		#Here to request the remote image
 		src_name = get_image(faceinfo.pose_bin_id, faceinfo.name)
@@ -63,11 +64,14 @@ def faceswap(img_name):
 		swap_name = DEFAULT_OUT_PREFIX+img_parsed_name+'_'+faceinfo.name+'.png'
 		cv2.imwrite(swap_name, swap_img)
 		
+                yield {"finished": True, "name": swap_name, "id": cnt, "break":False}
 		ret_names.append(swap_name)
 		src_names.append(src_name)
+                cnt+=1
+
 	for src in src_names:
 		os.remove(src)
-        yield {"finished": True, "result": ret_names}
+        yield {"finished": True, "result": ret_names, "break": True}
 
 
 if __name__ == '__main__':

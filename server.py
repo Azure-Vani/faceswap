@@ -90,26 +90,21 @@ class Process(object):
 
         for step in faceswap(self.tmp_file_name):
             print "[Step] ", step
+            if step["break"]: break
             if not step["finished"]:
                 dict = {"action": "update", "status": step["status"]}
                 socket.send(json.dumps(dict))
             else:
-                print "[Result List]: "
-                print "\t", step["result"]
-                self.result_file_names = step["result"]
-                break
-        
-        result_content = []
-        for i in self.result_file_names:
-            print "[Result] file %s" % (i)
-            tmp = open(i, "r+b")
-            result_content.append(self.fetch(tmp))
-            tmp.close()
-        
-        print "[WebSocket] Start transformission"
-        dict = {"action": "finish", "data": result_content}
-        socket.send(json.dumps(dict))
-        print "[WebSocket] End transformission"
+                name = step["name"]
+                self.result_file_names.append(name)
+                print "[Result]: "
+                print "\t", name
+                tmp = open(name, "r+b")
+                dict = {"action": "finish", "data": self.fetch(tmp), "id": step["id"]}
+                tmp.close()
+                print "[WebSocket] Start transformission %d"%(step["id"])
+                socket.send(json.dumps(dict))
+                print "[WebSocket] End transformission %d"%(step["id"])
         
     def write_to_file(self, data):
         suffix, img_data = self.decode(data)
@@ -152,8 +147,8 @@ if __name__ == '__main__':
     WebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()
 
-    cherrypy.config.update({'server.socket_host': '0.0.0.0',})
-    cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '80')),})
+    # cherrypy.config.update({'server.socket_host': '0.0.0.0',})
+    # cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '80')),})
 
     config = {
             "/static": {

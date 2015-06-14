@@ -13,34 +13,23 @@ $(document).ready(function() {
   var ws = new ReconnectingWebSocket(url);
 
   var photobooth;
-  var lock = false;
   ws.onopen = function() {
     photobooth = $('#container').photobooth();
 
 
     photobooth.on('image', function(event, dataUrl) {
-      if (lock) {
-        alert("Please don't send the duplicated request!")
-      }
-
       $(".result_img").fadeOut(300).delay(500).remove();
       $(".status").attr("src", "/static/assets/swaping.gif");
 
-      lock = true;
-
       ws.onmessage = function(event) {
-        if ($(".result_img").length > 0) {
-          return;
-        }
         var result = JSON.parse(event.data);
         if (result.action == "finish") {
-          for (var i = 0; i < result.data.length; i++) {
-            console.log("replace " + i);
-            var container = ".lsti" + i;
-            $("<img />", {"src": result.data[i], "class": "result_img", "display":"none"}).appendTo($(container));
-          }
-          $('.result_img').fadeIn(400);
-          lock = false;
+          console.log("replace " + result.id);
+          var id = result.id;
+          var data = result.data;
+          var container = ".lsti" + id;
+          $(container + " .result_img").remove();
+          $("<img />", {"src": result.data[i], "class": "result_img"}).appendTo($(container));
         } else {
           var newUrl = "/static/assets/" + result.status + ".gif";
           $('.status').attr("src", newUrl);
