@@ -13,6 +13,8 @@ $(document).ready(function() {
       alert("Please don't send the duplicated request!")
     }
 
+    $(".result_img").fadeOut(300).delay(500).remove();
+
     lock = true;
 
     var protocol = "ws";
@@ -29,7 +31,8 @@ $(document).ready(function() {
         for (var i = 0; i < result.data.length; i++) {
           console.log("replace " + i);
           var container = ".lsti" + i;
-          $("<img />", {src: result.data[i]}).appendTo($(container));
+          $("<img />", {"src": result.data[i], "class", "result_img", "display":"None"}).appendTo($(container));
+          $('.result_img').fadeIn(400);
         }
         lock = false;
       } else {
