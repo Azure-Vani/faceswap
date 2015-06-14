@@ -1,19 +1,43 @@
 $(document).ready(function() {
   var photobooth = $('#container').photobooth();
+
+  if (!window.WebSocket) {
+    alert("Browser don't support WebSocket!");
+    return;
+  }
+
+  var lock = false;
+
   photobooth.on('image', function(event, dataUrl) {
-    var ajax = $.ajax({
-      method: "POST",
-      url: "/query",
-      data: {"data": dataUrl}
-    }).success(function(_data) {
-      var data = eval(_data);
-      for (var i = 0; i < 6; i++) {
-        var listName = ".lsti" + i;
-        $('<img />', {src: data[i]}).appendTo($(listName));
+    if (lock) {
+      alert("Please don't send the duplicated request!")
+    }
+
+    lock = true;
+
+    var url = "ws://" + location.host + "/ws";
+    console.log("[websocket] established url: " + url)
+    var ws = new ReconnectingWebSocket(url);
+
+    ws.onmessage = function(event) {
+      var result = JSON.parse(event.data);
+      if (result.action == "finish") {
+        for (var i = 0; i < result.data.length; i++) {
+          var container = ".lsti" + i;
+          $("<img />", {src: result.data[0]}).appendTo($(container));
+        }
+        lock = false;
+      } else {
+        var newUrl = "/static/assets/" + result.status + ".gif";
+        $('.status').attr("src", newUrl);
       }
-      alert("Transmission Successful!");
-    }).fail(function() {
-      alert("Transmission Failed!");
-    });
+    }
+
+    var data = {"action": "query", "content": dataUrl};
+    ws.onopen = function() {
+      ws.send(JSON.stringify(data));
+    }
+
   });
+
 });
