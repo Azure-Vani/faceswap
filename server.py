@@ -147,8 +147,8 @@ if __name__ == '__main__':
     WebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()
 
-    # cherrypy.config.update({'server.socket_host': '0.0.0.0',})
-    # cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '80')),})
+    cherrypy.config.update({'server.socket_host': '0.0.0.0',})
+    cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '80')),})
 
     config = {
             "/static": {
