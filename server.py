@@ -64,8 +64,8 @@ class Faceswap(object):
 if __name__ == '__main__':
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    #cherrypy.config.update({'server.socket_host': '0.0.0.0',})
-    #cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '80')),})
+    cherrypy.config.update({'server.socket_host': '0.0.0.0',})
+    cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '80')),})
 
     config = {
             "/static": {
