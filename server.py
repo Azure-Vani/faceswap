@@ -39,6 +39,7 @@ class Faceswap(object):
             tmp.close()
             os.remove(i)
 
+        print json.dumps(result)
         return json.dumps(result)
 
     def process(self, file_name):
@@ -53,7 +54,7 @@ class Faceswap(object):
         return self.encode(raw_data, suffix)
 
     def encode(self, raw_data, suffix):
-        return "image/%s;base64,%s"%(suffix, base64.b64encode(raw_data))
+        return "data:image/%s;base64,%s"%(suffix, base64.b64encode(raw_data))
 
     def decode(self, data):
         meta, raw_data = data.split(",")
