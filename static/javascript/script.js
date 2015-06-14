@@ -29,7 +29,7 @@ $(document).ready(function() {
           var data = result.data;
           var container = ".lsti" + id;
           $(container + " .result_img").remove();
-          $("<img />", {"src": result.data[i], "class": "result_img"}).appendTo($(container));
+          $("<img />", {"src": result.data, "class": "result_img"}).appendTo($(container));
         } else {
           var newUrl = "/static/assets/" + result.status + ".gif";
           $('.status').attr("src", newUrl);
