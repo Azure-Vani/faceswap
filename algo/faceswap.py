@@ -17,6 +17,12 @@ API_KEY = 'bf7eae5ed9cf280218450523049d5f94'
 API_SECRET = 'o6SeKJTnaoczTb-j6PBEGXvkiVz2hp71'
 api = API(API_KEY, API_SECRET)
 
+class NoFaceDetected(Exception):
+	def __init__(self, val):
+		self.value = val
+	def __str__(self):
+		return repr(self.value)
+
 def faceswap(img_name):
 	img_parsed_name = (img_name.split('/')[-1]).split('.')[-2]
 	print img_parsed_name
@@ -28,6 +34,9 @@ def faceswap(img_name):
 	rst = api.detection.detect(img = File(img_name), attribute='pose')
 	img_width = rst['img_width']
 	img_height = rst['img_height']
+	
+	if len(rst['face']) == 0:
+		raise NoFaceDetected(img_name)
 	face = rst['face'][0]
 	face_id = face['face_id']
 	landmark = api.detection.landmark(face_id = face_id, type='25p')
