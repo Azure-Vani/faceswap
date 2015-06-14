@@ -6,7 +6,10 @@ $(document).ready(function() {
       url: "/query",
       data: {"data": dataUrl}
     }).success(function(data) {
-      $('#result').attr('src', dataUrl);
+      var res = $('#result');
+      for (var i = 0; i < 6; i++) {
+        $('<img />', {src: data[i]}).appendTo(res);
+      }
       alert("Transmission Successful!");
     }).fail(function() {
       alert("Transmission Failed!");

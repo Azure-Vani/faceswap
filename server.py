@@ -1,7 +1,15 @@
 import cherrypy
 import os
 import base64
-import tempfile
+import md5
+import json
+
+import os
+
+import sys
+sys.path.append('algo')
+
+from faceswap import faceswap
 
 class Faceswap(object):
 
@@ -12,10 +20,32 @@ class Faceswap(object):
     @cherrypy.expose
     def query(self, data):
         suffix, img_data = self.decode(data)
-        file = tempfile.NamedTemporaryFile(suffix="."+suffix)
-        print "[TempFile] Created file %s"%(file.name)
+
+        hash = md5.md5(img_data).hexdigest()
+        name = "%s.png"%(hash)
+        file = open(name, "w+b")
         file.write(img_data)
-        return self.fetch(file)
+        file.close()
+
+        file = open(name, "r+b")
+        res_files = self.process(name)
+        os.remove(name)
+
+        result = []
+        for i in res_files:
+            print "[Result] file %s" % (i)
+            tmp = open(i, "r+b")
+            result.append(self.fetch(tmp))
+            tmp.close()
+            os.remove(i)
+
+        return json.dumps(result)
+
+    def process(self, file_name):
+        output = faceswap(file_name)
+        print "[Result List]: "
+        print "\t", output
+        return output
 
     def fetch(self, file):
         raw_data = file.read()
@@ -34,8 +64,8 @@ class Faceswap(object):
 if __name__ == '__main__':
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    cherrypy.config.update({'server.socket_host': '0.0.0.0',})
-    cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '80')),})
+    #cherrypy.config.update({'server.socket_host': '0.0.0.0',})
+    #cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '80')),})
 
     config = {
             "/static": {
@@ -43,4 +73,8 @@ if __name__ == '__main__':
                 "tools.staticdir.dir": os.path.join(current_dir, "static/")
                 }
             }
+
+    cherrypy.config["tools.encode.on"] = False
+
+    os.chdir('algo')
     cherrypy.quickstart(Faceswap(), "/", config)
