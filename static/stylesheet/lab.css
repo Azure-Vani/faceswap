@@ -1,0 +1,88 @@
+body{background:url(/static/assets/5-120601095138.jpg); background-repeat:repeat-x repeat-y; text-align:center; text-decoration:none; font-family:papyrus; }
+
+.nav{background:#2F282C;}
+#mbd-intr{width:100%; height: 460px;; min-height: 250px; font-size:30px;}
+.mbd-intr:before{
+	content:'';
+	display:block; position:absolute;
+	top:310px;
+	left:50%;
+	margin-left: -600px;
+	background:url(/static/assets/test.png);
+}
+.pic{ font-size: 60px; color:#E1574C; }
+.btn-1{
+	font-family:Lucida Handwriting;
+	position: relative; 
+	display:block; 
+	width:176px; height:176px; 
+	background: #E2574C url(/static/assets/circle.png) no-repeat scroll center center; 
+	border-radius: 1000px; 
+	padding:45px 48px 0px; 
+	margin:15px auto 28px; 
+	box-sizing:border-box; 
+	color:#F1F1F1;
+	font-size: 32px; text-decoration:none;
+}
+.btn-1:hover{color:#2F282C; text-decoration:none;}
+.btn-1:hover:before{
+	top: 4px; left:4px;
+}
+.btn-1:before{
+	content:'';
+	position:absolute;
+	top:8px;
+	left:8px;
+	width:176px; height:176px;
+	display:block;
+	background:url(/static/assets/shadow.png) repeat scroll left top; border-radius:1000px; z-index:-1;
+}
+.footer{
+	width:100%;
+	height:35px;
+	background:#2F282C;
+	font-size: 24px;
+	color:#E2574C;
+    clear:both;
+}
+.frm{background:url(/static/assets/frame.gif) no-repeat; float:left; width: 600px; height:700px; padding-top: 100px; }
+.sfrm{
+	width: 700px;
+	min-width: 300px;
+	font-size: 36px;
+	color:#2F282C;
+    float: right;
+}
+.hd2{
+	height: 50px;
+	text-align:left;
+	padding-bottom: 10px;
+	border-bottom:3px solid #E2574C;
+}
+.lst{list-style:none; float:left;}
+
+.lsti{float:left; width:200px; height: 370px; border-bottom: 2px solid #E2574C; margin-right: 10px;}
+
+.lsti img {
+    width: 200px;
+    height: 300px;
+}
+
+
+#container {
+    float: left;
+    width: 430px;
+    height: 330px;
+    margin-left: 50px;
+    margin-top: 70px;
+}
+
+#frame {
+  position: absolute;
+  top: 15px;
+  left: 37px;
+  background: url(/static/assets/frame.gif) no-repeat;
+  width: 465px;
+  height: 411px;
+  background-size: 465px 411px;
+}

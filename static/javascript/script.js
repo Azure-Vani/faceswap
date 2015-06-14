@@ -7,9 +7,9 @@ $(document).ready(function() {
       data: {"data": dataUrl}
     }).success(function(_data) {
       var data = eval(_data);
-      var res = $('#result');
       for (var i = 0; i < 6; i++) {
-        $('<img />', {src: data[i]}).appendTo(res);
+        var listName = ".lsti" + i;
+        $('<img />', {src: data[i]}).appendTo($(listName));
       }
       alert("Transmission Successful!");
     }).fail(function() {

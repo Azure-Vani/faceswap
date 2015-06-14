@@ -39,7 +39,6 @@ class Faceswap(object):
             tmp.close()
             os.remove(i)
 
-        print json.dumps(result)
         return json.dumps(result)
 
     def process(self, file_name):
