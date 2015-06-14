@@ -26,6 +26,9 @@ $(document).ready(function() {
     var ws = new ReconnectingWebSocket(url);
 
     ws.onmessage = function(event) {
+      if ($(".result_img").length > 0) {
+        return;
+      }
       var result = JSON.parse(event.data);
       if (result.action == "finish") {
         for (var i = 0; i < result.data.length; i++) {
