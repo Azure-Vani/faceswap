@@ -71,7 +71,7 @@ class WebSocketHandler(WebSocket):
         print "[Websocket] Action: %s"%(data["action"])
         if data["action"] == "query":
             p = Process()
-            bgtask.put(p.run, self, data["content"])
+            p.run(self, data["content"])
         else:
             print "[WebSocket] Unkonwn action"
 
@@ -148,10 +148,6 @@ class Faceswap(object):
 
 if __name__ == '__main__':
     current_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # register extension for cherrypy
-    bgtask = BackgroundTaskQueue(cherrypy.engine)
-    bgtask.subscribe()
 
     WebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()

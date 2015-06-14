@@ -15,7 +15,11 @@ $(document).ready(function() {
 
     lock = true;
 
-    var url = "wss://" + location.host + "/ws";
+    var protocol = "ws";
+    if (location.protocol == "https:") {
+      protocol = "wss";
+    }
+    var url = protocol + "://" + location.host + "/ws";
     console.log("[websocket] established url: " + url)
     var ws = new ReconnectingWebSocket(url);
 
@@ -25,7 +29,7 @@ $(document).ready(function() {
         for (var i = 0; i < result.data.length; i++) {
           console.log("replace " + i);
           var container = ".lsti" + i;
-          $("<img />", {src: result.data[1]}).appendTo($(container));
+          $("<img />", {src: result.data[i]}).appendTo($(container));
         }
         lock = false;
       } else {
