@@ -15,7 +15,7 @@ $(document).ready(function() {
 
     lock = true;
 
-    var url = "ws://" + location.host + "/ws";
+    var url = "wss://" + location.host + "/ws";
     console.log("[websocket] established url: " + url)
     var ws = new ReconnectingWebSocket(url);
 
