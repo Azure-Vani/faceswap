@@ -50,6 +50,7 @@ def faceclone(src_name, dst_name):
    
     nsrc_img = copy_image(src_img, dw, dh)
     ndst_img = copy_image(dst_img, dw, dh)
+
     ss = np.array(get_feature_points(src_face, src_img_width, src_img_height, dw, dh), dtype=np.float32)
     ps = np.array(get_feature_points(dst_face, dst_img_width, dst_img_height, dw, dh), dtype=np.float32)
 
@@ -57,6 +58,8 @@ def faceclone(src_name, dst_name):
 
     nsrc_img_width = src_img_width + dw * 2
     nsrc_img_height = src_img_height + dh * 2
+    ndst_img_width = dst_img_width + dw * 2
+    ndst_img_height = dst_img_height + dh * 2
     map_result = cv2.warpAffine(ndst_img, map_matrix, dsize=(nsrc_img_width,nsrc_img_height))
     
     extract_mask, center = contour.extract_face_mask(src_face['face_id'], src_img_width, src_img_height, src_name)
@@ -66,7 +69,7 @@ def faceclone(src_name, dst_name):
     map_result = cv2.seamlessClone(nsrc_img, map_result, next_mask, center, flags=cv2.NORMAL_CLONE)
 
     imap_matrix = cv2.invertAffineTransform(map_matrix)
-    final = cv2.warpAffine(map_result, imap_matrix, dsize=(ndst_img.shape[0:2]))
+    final = cv2.warpAffine(map_result, imap_matrix, dsize=(ndst_img_width, ndst_img_height))
 
     new_final = copy_back_image(final, dw, dh)
 
