@@ -11,9 +11,14 @@ $(document).ready(function() {
   var url = protocol + "://" + location.host + "/ws";
   console.log("[websocket] established url: " + url);
   var ws = new ReconnectingWebSocket(url);
+  var established = false;
 
   var photobooth;
   ws.onopen = function() {
+    if (established) {
+      return;
+    }
+    established = true;
     photobooth = $('#container').photobooth();
 
 
@@ -30,7 +35,10 @@ $(document).ready(function() {
           var container = ".lsti" + id;
           $(container + " .result_img").remove();
           $("<img />", {"src": result.data, "class": "result_img"}).appendTo($(container));
-        } else {
+        } else if (result.action == "failed") {
+          alert("No face detected, try again!");
+        }
+        else {
           var newUrl = "/static/assets/" + result.status + ".gif";
           $('.status').attr("src", newUrl);
         }
