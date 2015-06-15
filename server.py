@@ -71,7 +71,11 @@ class WebSocketHandler(WebSocket):
         print "[Websocket] Action: %s"%(data["action"])
         if data["action"] == "query":
             p = Process()
-            p.run(self, data["content"])
+            try:
+                p.run(self, data["content"])
+            except:
+                dict = {"action": "failed"}
+                self.send(json.dumps(dict))
         else:
             print "[WebSocket] Unkonwn action"
 
