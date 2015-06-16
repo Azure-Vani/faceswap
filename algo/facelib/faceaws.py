@@ -15,9 +15,6 @@ S3_PAGE_SIZE = 100
 POSEBIN_DATA_FILE = 'datafile.txt'
 
 s3_client = \
-boto3.session.Session(aws_access_key_id='AKIAI5NGHX62AZ4PPD5A',
-             		  aws_secret_access_key='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',
-                  	  region_name='us-east-1').client('s3')
 
 def get_posebin_data(s3_client):
 	datafile_path = S3_BUCKET_POSEBIN_FOLDER+'/'+POSEBIN_DATA_FILE
