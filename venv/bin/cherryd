@@ -1,0 +1,6 @@
+#!/Users/vincent/Coding/Projects/FaceSwap-server/venv/bin/python2.7
+
+import cherrypy.daemon
+
+if __name__ == '__main__':
+    cherrypy.daemon.run()
