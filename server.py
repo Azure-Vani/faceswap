@@ -145,14 +145,26 @@ class Faceswap(object):
     def ws(self):
         print "[WebSocket] Handler created: %s"%repr(cherrypy.request.ws_handler)
 
+    @cherrypy.expose
+    def echo(self): # This is a fake echo handler, actually
+        return "Hello World\n"
+
 if __name__ == '__main__':
+    url = '0.0.0.0'
+    port = '80'
+    if len(sys.argv) == 3:
+        # then the URL has not been set
+        url = sys.argv[1]
+        port = sys.argv[2]
+
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
+    # This 2 lines are basic routines for WebSocket and CherryPy
     WebSocketPlugin(cherrypy.engine).subscribe()
     cherrypy.tools.websocket = WebSocketTool()
 
-    cherrypy.config.update({'server.socket_host': '0.0.0.0',})
-    cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', '80')),})
+    cherrypy.config.update({'server.socket_host': url,})
+    cherrypy.config.update({'server.socket_port': int(os.environ.get('PORT', port)),})
 
     config = {
             "/static": {

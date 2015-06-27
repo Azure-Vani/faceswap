@@ -10,6 +10,7 @@ $(document).ready(function() {
   }
   var url = protocol + "://" + location.host + "/ws";
   console.log("[websocket] established url: " + url);
+  // ws is a handler for WebSocket with JavaScript
   var ws = new ReconnectingWebSocket(url);
   var established = false;
 
