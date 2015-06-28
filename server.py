@@ -112,7 +112,7 @@ class Process(object):
                 print "[WebSocket] End transformission %d"%(step["id"])
 
     def write_to_file(self, data):
-        suffix, img_data = self.decode(data)
+        img_data = base64.b64decode(data)
         print "[WebSocket] finished decoding image base64 data"
         hash = md5.md5(img_data).hexdigest()
         name = "%s.png"%(hash)
