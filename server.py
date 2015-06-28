@@ -90,6 +90,7 @@ class Process(object):
             os.remove(i)
 
     def run(self, socket, data):
+        print "[Run]"
         self.tmp_file_name = self.write_to_file(data)
 
         for step in faceswap(self.tmp_file_name):
