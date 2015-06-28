@@ -112,7 +112,7 @@ class Process(object):
 
     def write_to_file(self, data):
         suffix, img_data = self.decode(data)
-
+        print "[WebSocket] finished decoding image base64 data"
         hash = md5.md5(img_data).hexdigest()
         name = "%s.png"%(hash)
         file = open(name, "w+b")
@@ -148,6 +148,22 @@ class Faceswap(object):
     @cherrypy.expose
     def echo(self): # This is a fake echo handler, actually
         return "Hello World\n"
+
+    @cherrypy.expose
+    def image(self):
+        content_length = cherrypy.request.headers['Content-Length']
+        raw_body = cherrypy.request.body.read(content_length)
+        body = json.loads(raw_body)
+        print "[Image Hanlder] Action: %s"%(data["action"])
+        if data["action"] == "query":
+            p = Process()
+            try:
+                p.run(self, data["content"])
+            except:
+                dict = {"action": "failed"}
+                return json.dumps(dict)
+        else:
+            print "[Image Hanlder] Unkonwn action"
 
 if __name__ == '__main__':
     url = '0.0.0.0'
